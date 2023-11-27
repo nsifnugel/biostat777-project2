@@ -31,7 +31,7 @@ calculate_CI.ci_class <- function(x, conf = 0.95) {
     names(calculate_CI) <- c("lower_bound", "upper_bound")
     return(calculate_CI)
   } else{
-    message("Error: Make sure your the ci_class data is a vector with numeric values.")
+    message("Make sure the data for your ci_class is a vector with numeric values.")
   }
 }
 

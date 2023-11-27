@@ -19,7 +19,7 @@
 #'
 
 calculate_CI <- function(x, conf = 0.95) {
-  if(is.vector(x) & is.numeric(x)){
+  if(is.numeric(x)){
     alpha <- 1 - conf
     degrees_freedom <- length(x) - 1
     t_score <- qt(p = alpha / 2, df = degrees_freedom, lower.tail = FALSE)
@@ -29,6 +29,6 @@ calculate_CI <- function(x, conf = 0.95) {
     names(calculate_CI) <- c("lower_bound", "upper_bound")
     return(calculate_CI)
   } else{
-    message("Your input was either not a vector or it contained non-numeric values.")
+    message("Your input contained non-numeric values.")
   }
 }

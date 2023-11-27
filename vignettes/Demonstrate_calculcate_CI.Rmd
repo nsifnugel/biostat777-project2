@@ -1,5 +1,5 @@
 ---
-title: "Demonstrations"
+title: "Demonstration of calculate_CI"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Demonstrations}
@@ -14,6 +14,154 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Demonstrating calculate_CI using Union Membership Data
+
+To demonstrate the calculate_CI function created in this package, I applied it to sample data from TidyTuesday. The data I chose was shared by Barry Hirsch (Georgia State University), David Macpherson (Trinity University), and William Even (Miami University). The data focuses on union membership and earnings throughout the US from the 1970s to the present and it comes from [Union Membership, Coverage, and Earnings from the CPS](https://www.unionstats.com/). There are three data sets total -- [demographics](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-05/demographics.csv), [wages](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-05/wages.csv), and [states](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-05/states.csv). [Click here for the data dictionaries](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-09-05/readme.md#demographicscsv).
+
+With this data analysis, I set out to explore the relationships between union membership, wages, and time. My first question was, how has union enrollment and coverage changed since the 1970s? The next question I investigated was, how have wages for union and nonunion workers changed since the 1970s? My final question was which state had the highest and which had the lowest mean union enrollment and how have those rates changed over time?
+
+## Set Up
+
 ```{r setup}
 library(biostat777project2nsifnugel)
+library(tidyverse)
+library(here)
+
+if (!dir.exists(here("data"))) {
+  dir.create(here("data"))
+}
+
+rds_files <- c("demographics.RDS","wages.RDS","states.RDS")
+if (any(!file.exists(here("data", rds_files)))) {
+  demographics <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-05/demographics.csv')
+  wages <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-05/wages.csv')
+  states <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-09-05/states.csv')
+  saveRDS(demographics, file = here("data", "demographics.RDS"))
+  saveRDS(wages, file = here("data", "wages.RDS"))
+  saveRDS(states, file = here("data", "states.RDS"))
+} else {demographics <- readRDS(here("data","demographics.RDS"))
+        wages <- readRDS(here("data","wages.RDS"))
+        states <- readRDS(here("data","states.RDS"))
+}
 ```
+
+## Question 1: How has union enrollment and coverage changed since the 1970s?
+
+```{r}
+percent_union <- demographics %>%
+  drop_na() %>%
+  filter(facet=="all wage and salary workers") %>%
+  mutate(decade_cat = case_when(
+    year < 1980 ~ "70s",
+    year >= 1980 & year < 1990 ~ "80s",
+    year >= 1990 & year < 2000 ~ "90s",
+    year >= 2000 & year < 2010 ~ "00s",
+    year >= 2010 & year < 2020 ~ "10s",
+    year >= 2020 ~ "20s"),
+    decade_cat = factor(decade_cat),
+    decade_cat = fct_relevel(decade_cat, "70s", "80s", "90s", "00s", "10s", "20s")) %>%
+  group_by(decade_cat) %>%
+  summarize(across(p_members:p_covered, list(mean=mean, sd=sd,
+                                           CI_lowerbound= ~ calculate_CI(.)[1],
+                                           CI_upperbound= ~ calculate_CI(.)[2]))) %>%
+  pivot_longer(-decade_cat) %>%
+  mutate(Group = case_when(
+    grepl("members",name) ~ "Union Members",
+    grepl("covered", name) ~ "Covered Workers"),
+    name = case_when(
+      grepl("mean",name) ~ "mean",
+      grepl("sd", name) ~ "sd",
+      grepl("lower",name) ~ "CI_lowerbound",
+      grepl("upper", name) ~ "CI_upperbound")) %>%
+  pivot_wider(id_cols=c(decade_cat,Group))
+
+percent_union %>%
+  ggplot(aes(x=decade_cat,y=mean,fill=Group)) +
+  geom_bar(stat="identity", position="dodge") +
+  geom_errorbar(aes(ymin = CI_lowerbound, ymax = CI_upperbound, x = decade_cat), width = 0.2, position = position_dodge(width = 0.9)) +
+  labs(title = "Percent of Workers in Unions or Covered by Union Bargaining Deals by Decade",
+      subtitle= "Union coverage and membership has been decreasing since 1970s.",
+      x = "Decade",
+      y = "Percent",
+      caption = "Source: Union Membership, Coverage, and Earnings from the CPS\nBarry Hirsch (Georgia State University), David Macpherson\n(Trinity University), and William Even (Miami University)") +
+  scale_y_continuous(label = scales::percent)
+```
+
+## Question 2: How have wages for union and nonunion workers changed since the 1970s?
+
+```{r}
+wages %>%
+  drop_na() %>%
+  filter(facet=="all wage and salary workers") %>%
+  mutate(decade_cat = case_when(
+    year < 1980 ~ "70s",
+    year >= 1980 & year < 1990 ~ "80s",
+    year >= 1990 & year < 2000 ~ "90s",
+    year >= 2000 & year < 2010 ~ "00s",
+    year >= 2010 & year < 2020 ~ "10s",
+    year >= 2020 ~ "20s"),
+    decade_cat = factor(decade_cat),
+    decade_cat = fct_relevel(decade_cat, "70s", "80s", "90s", "00s", "10s", "20s")) %>%
+  group_by(decade_cat) %>%
+  summarize(across(union_wage:nonunion_wage, mean)) %>%
+  pivot_longer(-decade_cat, names_to = "Group", values_to = "mean") %>%
+  mutate(Group = case_when(
+    grepl("nonunion", Group) ~ "Nonunion Workers",
+    grepl("union",Group) ~ "Union Workers")) %>%
+  ggplot(aes(x=decade_cat, y=mean, color = Group, group=Group)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE, size = 0.5) +
+  labs(title = "Mean Wages for Union and Nonunion Workers by Decade",
+       subtitle= "Union workers have made more than nonunion workers since the 1970s.\nThe gap between is increasing gradually.",
+       x = "Decade",
+       y = "Mean Wage ($)",
+       caption = "Source: Union Membership, Coverage, and Earnings from the CPS\nBarry Hirsch (Georgia State University), David Macpherson\n(Trinity University), and William Even (Miami University)") +
+  scale_y_continuous(label = scales::dollar)
+```
+
+## Question 3: Which state had the highest and which had the lowest mean union enrollment and how have those rates changed over time?
+
+```{r}
+states %>%
+  filter(sector=="Total") %>%
+  group_by(state) %>%
+  summarize(mean=mean(p_members)) %>%
+  arrange(desc(mean)) %>%
+  slice(1,50)
+
+states %>%
+  filter(sector=="Total", state %in% c("New York", "North Carolina")) %>%
+  mutate(decade_cat = case_when(
+    year >= 1980 & year < 1990 ~ "80s",
+    year >= 1990 & year < 2000 ~ "90s",
+    year >= 2000 & year < 2010 ~ "00s",
+    year >= 2010 & year < 2020 ~ "10s",
+    year >= 2020 ~ "20s"),
+    decade_cat = factor(decade_cat),
+    decade_cat = fct_relevel(decade_cat,"80s", "90s", "00s", "10s", "20s")) %>%
+  group_by(state,decade_cat) %>%
+  summarize(mean=mean(p_members)) %>%
+  ggplot(aes(x=decade_cat,y=mean, fill = state)) +
+  geom_bar(stat='identity') +
+  facet_wrap(~state) +
+  labs(title = "Union Membership in the Highest and Lowest Enrollment States by Decade",
+       subtitle= "Union membership is decreasing in both states, but this decline appears to be more\nsteep in New York.",
+       x = "Decade",
+       y = "Percent",
+       caption = "Source: Union Membership, Coverage, and Earnings from the CPS\nBarry Hirsch (Georgia State University), David Macpherson\n(Trinity University), and William Even (Miami University)") +
+  scale_y_continuous(label = scales::percent) + 
+  theme(legend.position = "none")
+```
+
+## Summary
+
+This analysis revealed that union enrollment has been declining since the 1970s. Conversely, wages continue to rise. Union workers have historically earned more than nonunion workers and this gap appears to have gradually widened, particularly in the 2010s. New York has the highest mean union enrollment, while North Caroline has he lowest mean enrollment. As observed nationally, union membership has been decreasing in both states. This decrease is visually more pronounced in New York compared to North Carolina.
+
+In this analysis, I used the calculate_CI function in the first visualization comparing national union enrollment rates over time. Using the 1970s as the reference decade, it appears the confidence intervals surrounding the percent enrollment for all other decades does not overlap that of the 1970s, suggesting there are meaningful differnces in the percentage of enrolled workers overtime.
+
+## Functions
+
+-   **dplyr**: filter(), slice(), mutate(), across(), summarize(), arrange(), group_by(), drop_na(), casewhen()
+-   **ggplot**: geom_point(), geom_col(), geom_smooth(), facet_wrap()
+-   **forcats**: fct_relevel()
+-   **tidyr**: pivot_longer(), pivot_wider()
