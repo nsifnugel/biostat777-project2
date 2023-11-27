@@ -1,0 +1,17 @@
+Package: biostat777project2nsifnugel
+Title: Contains functions for approximating sine and cosine and for generating confidence intervals
+Version: 0.0.0.9000
+Authors@R: 
+    person("Natalia", "Sifnugel", , "nsifnug1@jh.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package was contains functions for approximating sine and consine. It also contains a function for calculating confidence intervals. There is a variation of the confidence interval function which is a method for the S3 class ci_class.
+Imports: stats
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
