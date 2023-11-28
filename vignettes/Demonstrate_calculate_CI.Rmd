@@ -47,7 +47,7 @@ if (any(!file.exists(here("data", rds_files)))) {
 
 ## Question 1: How has union enrollment and coverage changed since the 1970s?
 
-```{r fig.height=6, fig.width=8}
+```{r, import_from = "biostat777project2nsifnugel",  fig.height=6, fig.width=8}
 percent_union <- demographics %>%
   drop_na() %>%
   filter(facet=="all wage and salary workers") %>%
@@ -63,12 +63,12 @@ percent_union <- demographics %>%
   group_by(decade_cat) %>%
   summarize(mean_members = mean(p_members),
             sd_members = sd(p_members),
-            CI_lowerbound_members = calculate_CI(p_members)[1],
-            CI_upperbound_members = calculate_CI(p_members)[2],
+            CI_lowerbound_members = calculate_CI(biostat777project2nsifnugel:::make_ci_class(p_members))[1],
+            CI_upperbound_members = calculate_CI(biostat777project2nsifnugel:::make_ci_class(p_members))[2],
             mean_covered = mean(p_covered),
             sd_covered = sd(p_covered), 
-            CI_lowerbound_covered = calculate_CI(p_covered)[1],
-            CI_upperbound_covered = calculate_CI(p_covered)[2]) %>%
+            CI_lowerbound_covered = calculate_CI(biostat777project2nsifnugel:::make_ci_class(p_covered))[1],
+            CI_upperbound_covered = calculate_CI(biostat777project2nsifnugel:::make_ci_class(p_covered))[2]) %>%
   pivot_longer(-decade_cat) %>%
   mutate(Group = case_when(
     grepl("members",name) ~ "Union Members",

@@ -16,12 +16,12 @@
 #' @examples
 #' set.seed(1234)
 #' x = sample(10:1000,20)
+#' x = biostat777project2nsifnugel:::make_ci_class(x)
 #' calculate_CI(x,conf=0.95)
 #'
 
 calculate_CI <- function(x, conf = 0.95) {
-  x <- make_ci_class(x)
-  if(is.numeric(x$Data)){
+  if(inherits(x, "ci_class") & is.numeric(x$Data)){
     alpha <- 1 - conf
     degrees_freedom <- length(x$Data) - 1
     t_score <- qt(p = alpha / 2, df = degrees_freedom, lower.tail = FALSE)
@@ -31,6 +31,6 @@ calculate_CI <- function(x, conf = 0.95) {
     names(calculate_CI) <- c("lower_bound", "upper_bound")
     return(calculate_CI)
   } else{
-    message("Make sure the data for your ci_class object is numeric.")
+    message("Make sure your input is ci_class and the data attribute is numeric.")
   }
 }

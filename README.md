@@ -29,6 +29,7 @@ The functions exported in this package are:
 ```         
 > set.seed(1234)
 > x = sample(10:1000,20)
+> x = biostat777project2nsifnugel:::make_ci_class(x)
 > calculate_CI(x,conf=0.95)
 lower_bound upper_bound 
     405.851     712.349 
