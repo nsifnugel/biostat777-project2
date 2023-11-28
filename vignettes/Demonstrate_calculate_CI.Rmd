@@ -47,7 +47,7 @@ if (any(!file.exists(here("data", rds_files)))) {
 
 ## Question 1: How has union enrollment and coverage changed since the 1970s?
 
-```{r}
+```{r fig.height=6, fig.width=8}
 percent_union <- demographics %>%
   drop_na() %>%
   filter(facet=="all wage and salary workers") %>%
@@ -61,9 +61,14 @@ percent_union <- demographics %>%
     decade_cat = factor(decade_cat),
     decade_cat = fct_relevel(decade_cat, "70s", "80s", "90s", "00s", "10s", "20s")) %>%
   group_by(decade_cat) %>%
-  summarize(across(p_members:p_covered, list(mean=mean, sd=sd,
-                                           CI_lowerbound= ~ calculate_CI(.)[1],
-                                           CI_upperbound= ~ calculate_CI(.)[2]))) %>%
+  summarize(mean_members = mean(p_members),
+            sd_members = sd(p_members),
+            CI_lowerbound_members = calculate_CI(p_members)[1],
+            CI_upperbound_members = calculate_CI(p_members)[2],
+            mean_covered = mean(p_covered),
+            sd_covered = sd(p_covered), 
+            CI_lowerbound_covered = calculate_CI(p_covered)[1],
+            CI_upperbound_covered = calculate_CI(p_covered)[2]) %>%
   pivot_longer(-decade_cat) %>%
   mutate(Group = case_when(
     grepl("members",name) ~ "Union Members",
@@ -89,7 +94,7 @@ percent_union %>%
 
 ## Question 2: How have wages for union and nonunion workers changed since the 1970s?
 
-```{r}
+```{r fig.height=6, fig.width=8}
 wages %>%
   drop_na() %>%
   filter(facet=="all wage and salary workers") %>%
@@ -121,7 +126,7 @@ wages %>%
 
 ## Question 3: Which state had the highest and which had the lowest mean union enrollment and how have those rates changed over time?
 
-```{r}
+```{r fig.height=6, fig.width=8}
 states %>%
   filter(sector=="Total") %>%
   group_by(state) %>%

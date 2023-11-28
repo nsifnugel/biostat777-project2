@@ -10,6 +10,7 @@
 #' @return Returns lower- and upperbound of the confidence interval
 #'
 #' @import stats
+#'
 #' @export
 #'
 #' @examples
@@ -19,16 +20,25 @@
 #'
 
 calculate_CI <- function(x, conf = 0.95) {
-  if(is.numeric(x)){
+  if (is.numeric(x)) {
     alpha <- 1 - conf
     degrees_freedom <- length(x) - 1
     t_score <- qt(p = alpha / 2, df = degrees_freedom, lower.tail = FALSE)
-    lower_bound = sample_mean(x) - t_score*(sample_sd(x)/sqrt(length(x)))
-    upper_bound = sample_mean(x) + t_score*(sample_sd(x)/sqrt(length(x)))
-    calculate_CI = c(lower_bound,upper_bound)
+    lower_bound = mean(x) - t_score * (sd(x) / sqrt(length(x)))
+    upper_bound = mean(x) + t_score * (sd(x) / sqrt(length(x)))
+    calculate_CI = c(lower_bound, upper_bound)
     names(calculate_CI) <- c("lower_bound", "upper_bound")
     return(calculate_CI)
-  } else{
-    message("Your input contained non-numeric values.")
+  } else if (inherits(x, "ci_class") & is.numeric(x$Data)) {
+    alpha <- 1 - conf
+    degrees_freedom <- length(x$Data) - 1
+    t_score <- qt(p = alpha / 2, df = degrees_freedom, lower.tail = FALSE)
+    lower_bound = mean(x$Data) - t_score * (sd(x$Data) / sqrt(length(x$Data)))
+    upper_bound = mean(x$Data) + t_score * (sd(x$Data) / sqrt(length(x$Data)))
+    calculate_CI = c(lower_bound, upper_bound)
+    names(calculate_CI) <- c("lower_bound", "upper_bound")
+    return(calculate_CI)
+  } else {
+    message("Make sure input class is either numeric or ci_class")
   }
 }

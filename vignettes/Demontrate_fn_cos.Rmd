@@ -32,7 +32,7 @@ data <- tibble(
 
 ```
 
-```{r}
+```{r fig.height=6, fig.width=8}
 data %>% ggplot() +
   geom_point(aes(x,cos)) +
   geom_smooth(aes(x,value, color = k), se = FALSE) +
