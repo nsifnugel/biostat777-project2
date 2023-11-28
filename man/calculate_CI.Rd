@@ -7,7 +7,7 @@
 calculate_CI(x, conf = 0.95)
 }
 \arguments{
-\item{x}{vector containing numeric values}
+\item{x}{vector containing numeric values of ci_class}
 
 \item{conf}{confidence level used to generate the confidence interval}
 }
@@ -18,11 +18,12 @@ Returns lower- and upperbound of the confidence interval
 Calculate the confidence interval around the mean of a vector
 }
 \details{
-This function calculates and returns the lower- and upperbounds of the confidence interval about the mean of a vector. The vector and the desired confidence level are passed as arguments to the function. The default level of confidence is 0.95.
+This function calculates and returns the lower- and upperbounds of the confidence interval about the mean of a vector of ci_class. The vector and the desired confidence level are passed as arguments to the function. The default level of confidence is 0.95.
 }
 \examples{
 set.seed(1234)
 x = sample(10:1000,20)
+x <- make_ci_class(x)
 calculate_CI(x,conf=0.95)
 
 }

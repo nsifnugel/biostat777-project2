@@ -7,9 +7,9 @@
 fn_sin(x, k)
 }
 \arguments{
-\item{x}{the number (or vector of numbers) to be transformed}
+\item{x}{the number to be transformed}
 
-\item{k}{the number of terms to be used in the series expansion beyond the constant 1. The value of k is always greater than or equal to 1.}
+\item{k}{the number of terms to be used in the series expansion beyond the constant x. The value of k is always greater than or equal to 1.}
 }
 \value{
 Returns the sine using truncated series expansion.
