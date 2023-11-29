@@ -23,7 +23,7 @@ This function calculates and returns the lower- and upperbounds of the confidenc
 \examples{
 set.seed(1234)
 x = sample(10:1000,20)
-x = biostat777project2nsifnugel:::make_ci_class(x)
+x = make_ci_class(x)
 calculate_CI(x,conf=0.95)
 
 }

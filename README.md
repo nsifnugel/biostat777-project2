@@ -29,8 +29,26 @@ The functions exported in this package are:
 ```         
 > set.seed(1234)
 > x = sample(10:1000,20)
-> x = biostat777project2nsifnugel:::make_ci_class(x)
+> x = make_ci_class(x)
 > calculate_CI(x,conf=0.95)
 lower_bound upper_bound 
     405.851     712.349 
 ```
+
+-   **make_ci_class(x)** which transforms an input to an object of ci_class. The input must be a numeric vector.
+
+```
+> x = c(0,1,2,3)
+> x = make_ci_class(x)
+> class(x)
+[1] "ci_class"
+```
+
+- **print.ci_class(x)** which prints the number of observations in a ci_class object and invisibly returns the ci_class object.
+
+```
+> x = c(0,1,2,3)
+> x = make_ci_class(x)
+> print(x)
+a ci_class with 4 observations
+``
