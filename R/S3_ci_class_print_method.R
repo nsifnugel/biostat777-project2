@@ -2,7 +2,7 @@
 #'
 #' Prints the number of observations in a ci_class object
 #'
-#' @details This function is ci_class method and it prints the number of observations in a ci_class object. It is invisibly returns the ci_class object.
+#' @details This function is a ci_class method and it prints the number of observations in a ci_class object. It is invisibly returns the ci_class object.
 #'
 #' @param x a ci_class object
 #'

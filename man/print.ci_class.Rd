@@ -16,7 +16,7 @@ Returns the ci_class object
 Prints the number of observations in a ci_class object
 }
 \details{
-This function is ci_class method and it prints the number of observations in a ci_class object. It is invisibly returns the ci_class object.
+This function is a ci_class method and it prints the number of observations in a ci_class object. It is invisibly returns the ci_class object.
 }
 \examples{
 x = c(0,1,2,3)

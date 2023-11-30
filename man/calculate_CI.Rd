@@ -11,12 +11,9 @@ calculate_CI(x, conf = 0.95)
 
 \item{conf}{confidence level used to generate the confidence interval}
 }
-\value{
-Returns lower- and upperbound of the confidence interval
-}
 \description{
 Generic Function for calculate_CI for ci_class objects
 }
 \details{
-This function calculates and returns the lower- and upperbounds of the confidence interval about the mean of a vector of ci_class. The vector and the desired confidence level are passed as arguments to the function. The default level of confidence is 0.95.
+This function is the generic function for the calculate_CI S3 ci_class method defined in this package. Calculate_CI calculates and returns the lower- and upperbounds of the confidence interval about the mean of a vector of ci_class. The vector and the desired confidence level are passed as arguments to the function. The default level of confidence is 0.95.
 }

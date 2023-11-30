@@ -2,7 +2,7 @@
 #'
 #' Calculate the confidence interval around the mean of a vector
 #'
-#' @details This function calculates and returns the lower- and upperbounds of the confidence interval about the mean of a vector of ci_class. The vector and the desired confidence level are passed as arguments to the function. The default level of confidence is 0.95.
+#' @details This function is a ci_class S3 method. It calculates and returns the lower- and upperbounds of the confidence interval about the mean of a vector of ci_class. The vector and the desired confidence level are passed as arguments to the function. The default level of confidence is 0.95.
 #'
 #' @param x vector containing numeric values of ci_class
 #' @param conf confidence level used to generate the confidence interval
@@ -30,7 +30,7 @@ calculate_CI.ci_class <- function(x, conf = 0.95) {
     names(calculate_CI) <- c("lower_bound", "upper_bound")
     return(calculate_CI)
   } else{
-    message("Make sure your input is ci_class and the data attribute is numeric.")
+    message("Make sure the data attribute for your ci_class object is numeric.")
   }
 }
 
