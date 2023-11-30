@@ -19,9 +19,8 @@
 #' x = make_ci_class(x)
 #' calculate_CI(x,conf=0.95)
 #'
-
-calculate_CI <- function(x, conf = 0.95) {
-  if(inherits(x, "ci_class") & is.numeric(x$Data)){
+calculate_CI.ci_class <- function(x, conf = 0.95) {
+  if(is.numeric(x$Data)){
     alpha <- 1 - conf
     degrees_freedom <- length(x$Data) - 1
     t_score <- qt(p = alpha / 2, df = degrees_freedom, lower.tail = FALSE)
@@ -34,3 +33,4 @@ calculate_CI <- function(x, conf = 0.95) {
     message("Make sure your input is ci_class and the data attribute is numeric.")
   }
 }
+
