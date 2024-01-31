@@ -36,7 +36,7 @@ data <- tibble(
 ```{r fig.height=6, fig.width=8}
 data %>% ggplot() +
   geom_point(aes(x,cos)) +
-  geom_smooth(aes(x,value, color = k), se = FALSE) +
+  geom_line(aes(x,value, color = k)) +
   coord_cartesian(ylim = c(-10,10)) +
   labs(title = "Comparing cos and fn_cos",
       subtitle = "As the difference between k and x increases, the accuracy of fn_cos improves.",
